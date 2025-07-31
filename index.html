@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Advanced House Price Prediction</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 40px; background-color: #f9f9f9; }
+        form { background: white; padding: 20px; border-radius: 10px; display: inline-block; text-align: left; width: 300px; }
+        input { width: 100%; padding: 8px; margin: 5px; }
+        button { width: 100%; padding: 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+        h2 { margin-top: 20px; }
+        .error { color: red; font-weight: bold; }
+        table { margin: 20px auto; border-collapse: collapse; width: 60%; }
+        th, td { padding: 8px; border: 1px solid #ccc; text-align: center; }
+        th { background-color: #ddd; }
+    </style>
+</head>
+<body>
+    <h1>🏡 Advanced House Price Prediction</h1>
+    <form action="/predict" method="post" onsubmit="return validateForm()">
+        <label>Area (sq ft):</label>
+        <input type="number" name="area" id="area" min="1" value="{{ area or '' }}" required>
+        <label>Bedrooms:</label>
+        <input type="number" name="bedrooms" id="bedrooms" min="1" max="10" value="{{ bedrooms or '' }}" required>
+        <label>Bathrooms:</label>
+        <input type="number" name="bathrooms" id="bathrooms" min="1" max="10" value="{{ bathrooms or '' }}" required>
+        <label>Stories:</label>
+        <input type="number" name="stories" id="stories" min="1" max="5" value="{{ stories or '' }}" required>
+        <button type="submit">Predict Price</button>
+    </form>
+
+    <h2 class="error">{{ prediction_text }}</h2>
+
+    {% if top_features %}
+    <h3>📊 Feature Importance (What impacts the price most?)</h3>
+    <table>
+        <tr><th>Feature</th><th>Importance Score</th></tr>
+        {% for f in top_features %}
+        <tr><td>{{ f.feature }}</td><td>{{ "%.3f"|format(f.importance) }}</td></tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    <script>
+        function validateForm() {
+            let inputs = ['area', 'bedrooms', 'bathrooms', 'stories'];
+            for (let id of inputs) {
+                let val = document.getElementById(id).value;
+                if (val <= 0) {
+                    alert(id.charAt(0).toUpperCase() + id.slice(1) + " must be greater than 0.");
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>
